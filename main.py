@@ -3,27 +3,27 @@ import numpy as np
 import mediapipe as mp
 
 capture=cv.VideoCapture(0)
-wdth=int(capture.get(3))
-ht=int(capture.get(4))
-shape=(wdth,ht,3)
+
+shape=(480,640,3)
 mask=np.zeros(shape,np.uint8)
-colour=(255,0,0)
+colour=(255,0,255)
 thickness=5
+mp_hands= mp.solutions.hands
+draw=mp.solutions.drawing_utils
+landmarks=mp_hands.Hands(max_num_hands=1)
+prevxy=None
 while True:
     
     isTrue,frame=capture.read()
     
     rgb=cv.cvtColor(frame,cv.COLOR_BGR2RGB)
-    mp_hands= mp.solutions.hands
-    draw=mp.solutions.drawing_utils
-    landmarks=mp_hands.Hands(max_num_hands=1)
     op=landmarks.process(rgb)
-    prevxy=None
+    
     if op.multi_hand_landmarks:
         for i in op.multi_hand_landmarks:
             draw.draw_landmarks(frame,i,mp_hands.HAND_CONNECTIONS)
-            x=int(i.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x*wdth)
-            y=int(i.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y*ht)
+            x=int(i.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].x*shape[1])
+            y=int(i.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y*shape[0])
             if prevxy!=None:
                 cv.line(mask,prevxy,(x,y),colour,thickness)
             prevxy=(x,y)
