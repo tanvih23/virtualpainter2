@@ -26,7 +26,8 @@ while True:
             y=int(i.landmark[mp_hands.HandLandmark.INDEX_FINGER_TIP].y*ht)
             if prevxy!=None:
                 cv.line(mask,prevxy,(x,y),colour,thickness)
-            
+            prevxy=(x,y)
+    frame=np.where(mask,mask,frame)
     if isTrue:
         if cv.waitKey(1)==ord('q'):
             break
